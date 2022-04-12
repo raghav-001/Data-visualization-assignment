@@ -1,0 +1,252 @@
+---
+title: "Data Visualization Digital Assignment-2"
+author: "V Raghav Anand - 19BCE1415"
+output:
+  word_document: default
+  html_document: default
+---
+Faculty: Prof Parvathi.R
+
+```{r}
+library(ggplot2)
+library(ggalt)
+theme_set(theme_bw())  # pre-set the bw theme.
+data = read.csv("Iris.csv")
+head(data)
+```
+
+## Scatterplot
+```{r}
+# Scatterplot
+gg <- ggplot(data, aes(x=PetalLengthCm, y=PetalWidthCm)) + 
+  geom_point(aes(col=Species, size=SepalWidthCm)) + 
+  geom_smooth(method="loess", se=F) + 
+  xlim(c(0, 7.5)) + 
+  ylim(c(0, 3)) + 
+  labs(subtitle="Petal Length vs Width", 
+       y="Petal Length", 
+       x="Petal Width", 
+       title="Scatterplot", 
+       caption = "Source: Iris.csv")
+plot(gg)
+```
+
+## ScatterPlot with encircle
+```{r}
+gg1<-ggplot(data, aes(x=PetalLengthCm, y=PetalWidthCm)) + 
+  geom_point(aes(col=Species)) +   # draw points
+  geom_smooth(method="loess", se=F) + 
+  xlim(c(0, 7.5)) + 
+  ylim(c(0, 3)) +   # draw smoothing line
+  geom_encircle(aes(x=PetalLengthCm, y=PetalWidthCm), 
+                data=data, 
+                color="red", 
+                size=2, 
+                expand=0.08) +   # encircle
+  labs(subtitle="Petal Length vs Width", 
+       y="Length", 
+       x="width", 
+       title="Scatterplot + Encircle", 
+       caption="Source: Iris.csv")
+plot(gg1)
+```
+
+## Scatterplot with overlapping
+```{r}
+g <- ggplot(data, aes(x=PetalLengthCm, y=PetalWidthCm))
+g + geom_point() + 
+  geom_smooth(method="lm", se=F) +
+    labs(subtitle="Length vs Width", 
+       y="Length", 
+       x="Width", 
+       title="Scatterplot with overlapping points", 
+       caption="Source: Iris")
+```
+
+## Jitter Plot
+```{r}
+g <- ggplot(data, aes(x=PetalLengthCm, y=PetalWidthCm))
+g + geom_jitter(width = .5, size=1) +
+  labs(subtitle="Length vs Width", 
+       y="Length", 
+       x="Width", 
+       title="Jittered Points")
+```
+
+
+
+## Bubble Plot
+```{r}
+g <- ggplot(data, aes(x=PetalLengthCm, y=PetalWidthCm)) + 
+  labs(subtitle="Length vs Width",
+       title="Bubble chart")
+
+g + geom_jitter(aes(col=Species)) + 
+  geom_smooth(aes(col=Species), method="lm", se=F)
+
+```
+
+## Marginal Histogram / Boxplot
+```{r}
+qplot(data $SepalLengthCm, geom="histogram") 
+```
+
+
+```{r}
+ggplot(data=data, aes(SepalLengthCm)) + 
+  geom_histogram()
+```
+
+
+
+## Stacked Bar
+```{r}
+g <- ggplot(data, aes(PetalLengthCm)) + scale_fill_brewer(palette = "Spectral")
+
+g + geom_histogram(aes(fill=Species), 
+                   binwidth = .1, 
+                   col="black", 
+                   size=.1) +  
+  labs(title="Histogram with Length", 
+       subtitle="PetalLength discipline across flowers")  
+
+```
+
+
+```{r}
+g + geom_histogram(aes(fill=Species), 
+                   bins=5, 
+                   col="black", 
+                   size=.1) +   
+  labs(title="Histogram with Fixed Bins", 
+       subtitle="Height discipline across flowers") 
+```
+
+
+```{r}
+g <- ggplot(data, aes(PetalLengthCm))
+g + geom_bar(aes(fill=Species), width = 0.5) + 
+  theme(axis.text.x = element_text(angle=65, vjust=0.6)) + 
+  labs(title="Histogram on Categorical Variable", 
+       subtitle="Varying petal lengths of flowers across species") 
+
+```
+
+## Density plot
+```{r}
+g <- ggplot(data, aes(PetalWidthCm))
+g + geom_density(aes(fill=Species), alpha=0.8) + 
+  labs(title="Density plot", 
+       subtitle="PetalWidth grouped by species",
+       caption="Source: Iris.csv",
+       x="PetalWidth",
+       fill="Species")
+```
+
+## BoxPlot
+```{r}
+g <- ggplot(data, aes(Species, PetalLengthCm))
+g + geom_boxplot(varwidth=T, fill="plum") + 
+  labs(title="Box plot", 
+       subtitle="PetalLength grouped by species",
+       caption="Source: Iris.csv",
+       x="Class of Species",
+       y="PetalLength")
+
+```
+
+## Correlation Plot
+```{r}
+library(ggcorrplot)
+corr <- round(cor(data[2:5]), 1)
+# Plot
+ggcorrplot(corr)
+```
+
+```{r}
+ggcorrplot(corr, method = "circle")
+```
+
+```{r}
+ggcorrplot(corr, hc.order = TRUE, outline.col = "white")
+```
+
+
+
+
+
+## Pie Chart
+```{r}
+pie <- ggplot(data, aes(x = "", fill = Species)) + 
+  geom_bar(width = 1) +
+  theme(axis.line = element_blank(), 
+        plot.title = element_text(hjust=0.5)) + 
+  labs(fill="class", 
+       x=NULL, 
+       y=NULL, 
+       title="Pie Chart of species", 
+       caption="Source: Iris.csv")
+pie + coord_polar(theta = "y", start=0)
+```
+
+
+## BoxPlot
+```{r}
+g <- ggplot(data, aes(Species, PetalLengthCm))
+g + geom_boxplot(varwidth=T, fill="plum") + 
+  labs(title="Box plot", 
+       subtitle="Petal Length grouped by species",
+       caption="Source: Iris.csv",
+       x="Species",
+       y="Petal Length")
+```
+
+```{r}
+g <- ggplot(data, aes(Species, PetalWidthCm))
+g + geom_boxplot(aes(fill=Species)) + 
+  theme(axis.text.x = element_text(angle=65, vjust=0.6)) + 
+  labs(title="Box plot", 
+       subtitle="Petal Width grouped by species",
+       caption="Source: Iris.csv",
+       x="Species",
+       y="Petal Width")
+
+```
+
+```{r}
+g <- ggplot(data, aes(Species, SepalLengthCm))
+g + geom_boxplot() + 
+  geom_dotplot(binaxis='y', 
+               stackdir='center', 
+               dotsize = .5, 
+               fill="red") +
+  theme(axis.text.x = element_text(angle=65, vjust=0.6)) + 
+  labs(title="Box plot + Dot plot", 
+       subtitle="Sepal Length vs species: Each dot represents 1 row in source data",
+       caption="Source: Iris.csv",
+       x="Species",
+       y="Sepal Length of flowers")
+
+```
+
+## Tree mapify
+```{r}
+library(treemapify)
+ggplot(data, aes(area=PetalLengthCm, fill=Species, subgroup=Species)) + 
+  geom_treemap()
+```
+
+```{r}
+ggplot(data, aes(area=PetalLengthCm, fill=Species, subgroup=Species)) + 
+  geom_treemap()+
+  #main group bordering
+  geom_treemap_subgroup_border()+
+  #subgroup heading in white
+  geom_treemap_subgroup_text(color="white")+
+  #all other group text in black
+  geom_treemap_text(aes(label=Id), color="black")+
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Dark2")
+
+```
